@@ -1,0 +1,36 @@
+# class file
+*.class
+
+# package file
+*.war
+*.ear
+
+# kdif3 file
+*.orig
+
+# maven file
+target/
+
+# eclipse file
+.settings/
+.project
+.classpath
+
+# idea file
+.idea/
+/idea/
+*.ipr
+*.iml
+*.iws
+
+# temp file
+*.log
+*.cache
+*.dif
+*.patch
+*.dif
+
+# system file
+.DS_Store
+Thumbs.db
+
