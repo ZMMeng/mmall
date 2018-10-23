@@ -86,4 +86,22 @@ public class Category {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
+    //使用Set集合包装对象时，需要重写equals()和hashCode()两个方法，以便于Set集合去重
+    //注意equals()和hashCode()两个方法的判断条件应该相同，这里都是使用id去判断
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Category)) return false;
+
+        Category category = (Category) o;
+
+        return id != null ? id.equals(category.id) : category.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

@@ -205,4 +205,11 @@ public class UserServiceImpl implements IUserService {
         user.setPassword(StringUtils.EMPTY);
         return ServerResponse.createBySuccess(user);
     }
+
+    public ServerResponse<String> checkAdminRole(User user) {
+        if (user != null && user.getRole() == Const.Role.ROLE_ADMIN) {
+            return ServerResponse.createBySuccess();
+        }
+        return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
+    }
 }
