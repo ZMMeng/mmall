@@ -88,9 +88,10 @@
     <insert id="insertSelective" parameterType="com.mmall.pojo.User">
         insert into mmall_user
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
+            id,
+            <!--<if test="id != null">
                 id,
-            </if>
+            </if>-->
             <if test="username != null">
                 username,
             </if>
@@ -112,17 +113,20 @@
             <if test="role != null">
                 role,
             </if>
-            <if test="createTime != null">
+            create_time,
+            <!--<if test="createTime != null">
                 create_time,
-            </if>
-            <if test="updateTime != null">
+            </if>-->
+            update_time,
+            <!--<if test="updateTime != null">
                 update_time,
-            </if>
+            </if>-->
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
+            #{id,jdbcType=INTEGER},
+            <!--<if test="id != null">
                 #{id,jdbcType=INTEGER},
-            </if>
+            </if>-->
             <if test="username != null">
                 #{username,jdbcType=VARCHAR},
             </if>
@@ -144,12 +148,14 @@
             <if test="role != null">
                 #{role,jdbcType=INTEGER},
             </if>
-            <if test="createTime != null">
+            now(),
+            <!--<if test="createTime != null">
                 now(),
-            </if>
-            <if test="updateTime != null">
+            </if>-->
+            now(),
+            <!--<if test="updateTime != null">
                 now(),
-            </if>
+            </if>-->
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.mmall.pojo.User">
@@ -176,9 +182,6 @@
             <if test="role != null">
                 role = #{role,jdbcType=INTEGER},
             </if>
-            <if test="createTime != null">
-                create_time = #{createTime,jdbcType=TIMESTAMP},
-            </if>
             <!--<if test="updateTime != null">
                 update_time = now(),
             </if>-->
@@ -195,7 +198,6 @@
         question = #{question,jdbcType=VARCHAR},
         answer = #{answer,jdbcType=VARCHAR},
         role = #{role,jdbcType=INTEGER},
-        create_time = #{createTime,jdbcType=TIMESTAMP},
         update_time = now()
         where id = #{id,jdbcType=INTEGER}
     </update>

@@ -1,12 +1,12 @@
 package com.mmall.util;
 
-import ch.qos.logback.classic.gaffer.PropertyUtil;
-
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ * MD5工具类
+ *
  * Created by 蒙卓明 on 2018/10/21
  */
 public class MD5Util {
