@@ -67,19 +67,16 @@
             where id = #{id,jdbcType=INTEGER}
     </delete>
     <insert id="insert" parameterType="com.mmall.pojo.Product">
-            insert into mmall_product (id, category_id, name,
-            subtitle, main_image, sub_image,
-            detail, price, stock,
-            status, create_time, update_time)
-            values (#{id,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
-            #{subtitle,jdbcType=VARCHAR}, #{mainImage,jdbcType=VARCHAR}, #{subImage,jdbcType=VARCHAR},
-            #{detail,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{stock,jdbcType=INTEGER},
-            #{status,jdbcType=INTEGER}, now(), now())
+            insert into mmall_product (category_id, name, subtitle, main_image, sub_image, detail, price,
+            stock, status, create_time, update_time)
+            values (#{categoryId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{subtitle,jdbcType=VARCHAR},
+            #{mainImage,jdbcType=VARCHAR}, #{subImage,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR},
+            #{price,jdbcType=DECIMAL}, #{stock,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, now(), now())
     </insert>
     <insert id="insertSelective" parameterType="com.mmall.pojo.Product">
         insert into mmall_product
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            id,
+            /*id,*/
             <!--<if test="id != null">
                 id,
             </if>-->
@@ -120,7 +117,7 @@
             </if>-->
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            #{id,jdbcType=INTEGER},
+            /*#{id,jdbcType=INTEGER},*/
             <!--<if test="id != null">
                 #{id,jdbcType=INTEGER},
             </if>-->

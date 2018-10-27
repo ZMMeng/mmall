@@ -23,6 +23,17 @@ public class Const {
         int ROLE_ADMIN = 1; //管理员
     }
 
+    public interface CartMarker {
+        //产品在购物栏中为选中状态
+        int CHECKED = 1;
+        //产品在购物栏中为未选中状态
+        int UN_CHECKED = 0;
+        //购物栏中的产品数量已超过产品库存
+        String LIMIT_NUM_FAIL = "LIMIT_NUM_FAIL";
+        //购物栏中的产品数量未超过产品库存
+        String LIMIT_NUM_SUCCESS = "LIMIT_NUM_SUCCESS";
+    }
+
     public enum ProductStatusEnum {
         ON_SALE("在售", 1),
         ;
