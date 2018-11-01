@@ -34,3 +34,7 @@ target/
 .DS_Store
 Thumbs.db
 
+# test file
+src/main/java/com/alipay/*
+src/main/test/*
+

@@ -34,6 +34,16 @@ public class Const {
         String LIMIT_NUM_SUCCESS = "LIMIT_NUM_SUCCESS";
     }
 
+    public interface AlipayCallback {
+
+        String TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY";
+        String TRADE_STATUS_TRADE_SUCCESS = "TRADE_SUCCESS";
+
+        String RESPONSE_SUCCESS = "success";
+        String RESPONSE_FAILED = "failed";
+
+    }
+
     public enum ProductStatusEnum {
         ON_SALE("在售", 1),
         ;
@@ -42,6 +52,95 @@ public class Const {
         private int code;
 
         ProductStatusEnum(String value, int code) {
+            this.value = value;
+            this.code = code;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public int getCode() {
+            return code;
+        }
+    }
+
+    public enum PaymentTypeEnum {
+
+        ONLINE_PAY("在线支付", 1)
+        ;
+
+        private String value;
+        private int code;
+
+        PaymentTypeEnum(String value, int code) {
+            this.value = value;
+            this.code = code;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public static PaymentTypeEnum codeOf(int code) {
+            for (PaymentTypeEnum pte : values()) {
+                if (pte.getCode() == code) {
+                    return pte;
+                }
+            }
+            throw new RuntimeException("没有找到对应的枚举");
+        }
+    }
+
+    public enum OrderStatusEnum {
+
+        CANCELED("已取消", 0),
+        NO_PAY("未支付", 10),
+        PAID("已付款", 20),
+        SHIPPED("已发货", 40),
+        ORDER_SUCCESS("订单完成", 50),
+        ORDER_CLOSE("订单关闭", 60)
+        ;
+
+        private String value;
+        private int code;
+
+        OrderStatusEnum(String value, int code) {
+            this.value = value;
+            this.code = code;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public static OrderStatusEnum codeOf(int code) {
+            for (OrderStatusEnum ose : values()) {
+                if (ose.getCode() == code) {
+                    return ose;
+                }
+            }
+            throw new RuntimeException("没有找到对应的枚举");
+        }
+    }
+
+    public enum PayPlatformEnum {
+
+        ALIPAY("支付宝", 1)
+        ;
+
+        private String value;
+        private int code;
+
+        PayPlatformEnum(String value, int code) {
             this.value = value;
             this.code = code;
         }

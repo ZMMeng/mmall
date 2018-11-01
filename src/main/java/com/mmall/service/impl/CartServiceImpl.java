@@ -2,6 +2,7 @@ package com.mmall.service.impl;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
@@ -15,11 +16,13 @@ import com.mmall.util.PropertiesUtil;
 import com.mmall.vo.CartProductVo;
 import com.mmall.vo.CartVo;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 蒙卓明 on 2018/10/27
@@ -41,10 +44,17 @@ public class CartServiceImpl implements ICartService {
      */
     @Override
     public ServerResponse<CartVo> listCart(Integer userId) {
-        CartVo cartVo = getCartVo(userId);
-        if (cartVo == null) {
-            return ServerResponse.createByErrorMessage("数据库发生异常");
+        List<Cart> cartList = cartMapper.selectByUserId(userId);
+        Map<Cart, Product> cartProductMap = Maps.newHashMap();
+        for (Cart cart : cartList) {
+            Product product = productMapper.selectByPrimaryKey(cart.getProductId());
+            if (product == null) {
+                return ServerResponse.createByErrorMessage("未找到产品ID为" + cart.getProductId() + "的产品");
+            }
+            cartProductMap.put(cart, product);
         }
+        boolean allCheck = getAllCheckedStatus(userId);
+        CartVo cartVo = assembleCartVo(cartProductMap, allCheck);
         return ServerResponse.createBySuccess(cartVo);
     }
 
@@ -64,12 +74,19 @@ public class CartServiceImpl implements ICartService {
                     ResponseCode.ILLEGAL_ARGUMENT.getDesc());
         }
 
+        Product product = productMapper.selectByPrimaryKey(productId);
+        if (product == null) {
+            return ServerResponse.createByErrorMessage("未找到产品ID为" + productId + "的产品");
+        }
+
         Cart cart = cartMapper.selectByUserIdAndProductId(userId, productId);
         if (cart == null) {
             //没有相应的购物栏
             Cart cartItem = new Cart();
             cartItem.setUserId(userId);
             cartItem.setProductId(productId);
+            //比较购买数量和库存
+            quantity = quantity > product.getStock() ? product.getStock() : quantity;
             cartItem.setQuantity(quantity);
             cartItem.setChecked(Const.CartMarker.CHECKED);
             int resultCount = cartMapper.insert(cartItem);
@@ -78,13 +95,16 @@ public class CartServiceImpl implements ICartService {
             }
         } else {
             //已经有相应的购物栏
-            quantity = cart.getQuantity() + quantity;
+            quantity = cart.getQuantity() + quantity > product.getStock() ? product.getStock() :
+                    cart.getQuantity() + quantity;
             cart.setQuantity(quantity);
             int resultCount = cartMapper.updateByPrimaryKeySelective(cart);
             if (resultCount == 0) {
                 return ServerResponse.createByErrorMessage("更新购物栏产品数量失败");
             }
         }
+
+        //
 
         return listCart(userId);
     }
@@ -170,81 +190,6 @@ public class CartServiceImpl implements ICartService {
     }
 
     /**
-     * 组装CartVo对象，购物车模块核心方法，感觉还是有点问题
-     *
-     * @param userId 用户ID
-     * @return
-     */
-    private CartVo getCartVo(Integer userId) {
-        CartVo cartVo = new CartVo();
-        List<Cart> cartList = cartMapper.selectByUserId(userId);
-        List<CartProductVo> cartProductVoList = Lists.newArrayList();
-
-        //购物车的总价，一个购物车包括多个购物栏
-        //使用String构造器
-        BigDecimal cartTotalPrice = new BigDecimal("0");
-
-        if (CollectionUtils.isNotEmpty(cartList)) {
-            for (Cart cartItem : cartList) {
-                CartProductVo cartProductVo = new CartProductVo();
-                cartProductVo.setId(cartItem.getId());
-                cartProductVo.setUserId(cartItem.getUserId());
-                cartProductVo.setProductId(cartItem.getProductId());
-                cartProductVo.setQuantity(cartItem.getQuantity());
-
-                Product product = productMapper.selectByPrimaryKey(cartItem.getProductId());
-                if (product != null) {
-                    cartProductVo.setProductName(product.getName());
-                    cartProductVo.setProductSubtitle(product.getSubtitle());
-                    cartProductVo.setProductMainImage(product.getMainImage());
-                    cartProductVo.setProductPrice(product.getPrice());
-                    cartProductVo.setProductStock(product.getStock());
-                    //比较产品库存和购买数量，并标记购买数量是否超过产品库存
-                    int buyLimitCount;
-                    if (product.getStock() >= cartItem.getQuantity()) {
-                        //库存充足
-                        buyLimitCount = cartItem.getQuantity();
-                        cartProductVo.setLimitQuantity(Const.CartMarker.LIMIT_NUM_SUCCESS);
-                    } else {
-                        //库存不足
-                        buyLimitCount = product.getStock();
-                        cartProductVo.setLimitQuantity(Const.CartMarker.LIMIT_NUM_FAIL);
-                        //在数据库中，对将购买数量更新为产品库存
-                        Cart cartForQuantityUpdate = new Cart();
-                        cartForQuantityUpdate.setId(cartItem.getId());
-                        cartForQuantityUpdate.setQuantity(buyLimitCount);
-                        int resultCount = cartMapper.updateByPrimaryKeySelective(cartForQuantityUpdate);
-                        if (resultCount == 0) {
-                            // 更新失败，未考虑，目前只是简单地返回null值
-                            return null;
-                        }
-                    }
-                    cartProductVo.setQuantity(buyLimitCount);
-                    cartProductVo.setProductTotalPrice(BigDecimalUtil.multiply(product.getPrice().doubleValue(),
-                            cartItem.getQuantity()));
-                    cartProductVo.setProductCheck(cartItem.getChecked());
-
-                    if (cartItem.getChecked() == Const.CartMarker.CHECKED) {
-                        //该购物栏的产品已经勾上
-                        cartTotalPrice = BigDecimalUtil.add(cartTotalPrice.doubleValue(),
-                                cartProductVo.getProductTotalPrice().doubleValue());
-                    }
-                    cartProductVoList.add(cartProductVo);
-                }
-
-            }
-        }
-
-        cartVo.setCartTotalPrice(cartTotalPrice);
-        cartVo.setCartProductVoList(cartProductVoList);
-        cartVo.setImageHost(PropertiesUtil.getProperty("ftp.server.http.prefix",
-                "http://img.bigdata.com/"));
-        cartVo.setAllCheck(getAllCheckedStatus(userId));
-
-        return cartVo;
-    }
-
-    /**
      * 判断用户的购物车下的产品是否都是勾选状态
      *
      * @param userId 用户ID
@@ -252,5 +197,62 @@ public class CartServiceImpl implements ICartService {
      */
     private boolean getAllCheckedStatus(Integer userId) {
         return userId != null && cartMapper.selectCartProductCheckStatusByUserId(userId) == 0;
+    }
+
+    /**
+     * 组装CartVo对象
+     * @param cartProductMap 购物栏-产品，对应Map
+     * @param allCheck 是否全选
+     * @return
+     */
+    private CartVo assembleCartVo(Map<Cart, Product> cartProductMap, boolean allCheck) {
+        CartVo cartVo = new CartVo();
+        List<CartProductVo> cartProductVoList = Lists.newArrayList();
+        //购物车的总价，一个购物车包括多个购物栏
+        //使用String构造器
+        BigDecimal cartTotalPrice = new BigDecimal("0");
+        if (MapUtils.isNotEmpty(cartProductMap)) {
+            for (Map.Entry<Cart, Product> entry : cartProductMap.entrySet()) {
+                CartProductVo cartProductVo = assembleCartProductVo(entry.getKey(),
+                        entry.getValue());
+                if (entry.getKey().getChecked() == Const.CartMarker.CHECKED) {
+                    cartTotalPrice = BigDecimalUtil.add(cartTotalPrice.doubleValue(),
+                            cartProductVo.getProductTotalPrice().doubleValue());
+                }
+                cartProductVoList.add(cartProductVo);
+            }
+        }
+        cartVo.setCartTotalPrice(cartTotalPrice);
+        cartVo.setCartProductVoList(cartProductVoList);
+        cartVo.setImageHost(PropertiesUtil.getProperty("ftp.server.http.prefix",
+                "http://img.bigdata.com/"));
+        cartVo.setAllCheck(allCheck);
+        return cartVo;
+    }
+
+    /**
+     * 组装CartProductVo对象
+     *
+     * @param cart    购物栏
+     * @param product 产品
+     * @return
+     */
+    private CartProductVo assembleCartProductVo(Cart cart, Product product) {
+        CartProductVo cartProductVo = new CartProductVo();
+        cartProductVo.setId(cart.getId());
+        cartProductVo.setUserId(cart.getUserId());
+        cartProductVo.setProductId(cart.getProductId());
+        cartProductVo.setQuantity(cart.getQuantity());
+        cartProductVo.setProductName(product.getName());
+        cartProductVo.setProductSubtitle(product.getSubtitle());
+        cartProductVo.setProductMainImage(product.getMainImage());
+        cartProductVo.setProductPrice(product.getPrice());
+        cartProductVo.setProductStock(product.getStock());
+        cartProductVo.setLimitQuantity(cart.getQuantity() > product.getStock() ? Const.CartMarker.LIMIT_NUM_FAIL :
+                Const.CartMarker.LIMIT_NUM_SUCCESS);
+        cartProductVo.setProductTotalPrice(BigDecimalUtil.multiply(product.getPrice().doubleValue(),
+                cart.getQuantity()));
+        cartProductVo.setProductCheck(cart.getChecked());
+        return cartProductVo;
     }
 }

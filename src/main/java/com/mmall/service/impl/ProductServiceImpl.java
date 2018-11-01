@@ -115,7 +115,8 @@ public class ProductServiceImpl implements IProductService {
             return ServerResponse.createByErrorMessage("产品已下架或产品不存在");
         }
 
-        ProductDetailVo productDetailVo = assembleProductDetailVo(product);
+        Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());
+        ProductDetailVo productDetailVo = assembleProductDetailVo(product, category);
 
         return ServerResponse.createBySuccess(productDetailVo);
     }
@@ -198,7 +199,8 @@ public class ProductServiceImpl implements IProductService {
             return ServerResponse.createByErrorMessage("产品已下架或已删除");
         }
 
-        ProductDetailVo productDetailVo = assembleProductDetailVo(product);
+        Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());
+        ProductDetailVo productDetailVo = assembleProductDetailVo(product, category);
 
         return ServerResponse.createBySuccess(productDetailVo);
     }
@@ -279,7 +281,6 @@ public class ProductServiceImpl implements IProductService {
      * @return
      */
     private ProductListVo assembleProductListVo(Product product) {
-
         ProductListVo productListVo = new ProductListVo();
         productListVo.setId(product.getId());
         productListVo.setCategoryId(product.getCategoryId());
@@ -300,8 +301,7 @@ public class ProductServiceImpl implements IProductService {
      * @param product 产品
      * @return
      */
-    private ProductDetailVo assembleProductDetailVo(Product product) {
-
+    private ProductDetailVo assembleProductDetailVo(Product product, Category category) {
         ProductDetailVo productDetailVo = new ProductDetailVo();
         productDetailVo.setId(product.getId());
         productDetailVo.setSubtitle(product.getSubtitle());
@@ -316,7 +316,7 @@ public class ProductServiceImpl implements IProductService {
 
         productDetailVo.setImageHost(PropertiesUtil.getProperty("ftp.server.http.prefix",
                 "http://img.bigdata.com/"));
-        Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());
+
         if (category == null) {
             //默认根节点
             productDetailVo.setParentId(0);

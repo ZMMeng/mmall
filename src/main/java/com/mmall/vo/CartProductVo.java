@@ -28,7 +28,7 @@ public class CartProductVo {
 
     public CartProductVo(Integer id, Integer userId, Integer productId, Integer quantity, String productName, String
             productSubtitle, String productMainImage, BigDecimal productPrice, Integer productStatus, BigDecimal
-            productTotalPrice, Integer productStock, Integer productCheck, String limitQuantity) {
+                                 productTotalPrice, Integer productStock, Integer productCheck, String limitQuantity) {
         this.id = id;
         this.userId = userId;
         this.productId = productId;
