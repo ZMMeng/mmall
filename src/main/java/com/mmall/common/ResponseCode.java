@@ -1,6 +1,7 @@
 package com.mmall.common;
 
 /**
+ * 返回状态码
  * Created by 蒙卓明 on 2018/10/21
  */
 public enum ResponseCode {

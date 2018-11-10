@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * MD5工具类
- *
+ * <p>
  * Created by 蒙卓明 on 2018/10/21
  */
 public class MD5Util {
@@ -16,6 +16,12 @@ public class MD5Util {
             "8", "9", "a", "b", "c", "d", "e", "f",
     };
 
+    /**
+     * byte数字转十六进制字符串
+     *
+     * @param b byte数值
+     * @return
+     */
     private static String byteToHexString(byte b) {
         int n = b;
         if (n < 0) {
@@ -26,17 +32,24 @@ public class MD5Util {
         return hexDigits[d1] + hexDigits[d2];
     }
 
-    private static String byteArrayToHexString(byte[] b) {
+    /**
+     * byte数组转十六进制字符串
+     *
+     * @param bytes byte数组
+     * @return
+     */
+    private static String byteArrayToHexString(byte[] bytes) {
         StringBuffer resultSb = new StringBuffer();
-        for (int i = 0; i < b.length; i++) {
-            resultSb.append(byteToHexString(b[i]));
+        for (int i = 0; i < bytes.length; i++) {
+            resultSb.append(byteToHexString(bytes[i]));
         }
         return resultSb.toString();
     }
 
     /**
      * 返回大写MD5码
-     * @param orgin 原始字符串
+     *
+     * @param orgin       原始字符串
      * @param charsetname 字符串编码
      * @return
      */
@@ -57,8 +70,14 @@ public class MD5Util {
         return resultString.toUpperCase();
     }
 
+    /**
+     * 输入参数加盐值后生成MD5
+     *
+     * @param orgin 原始字符串
+     * @return
+     */
     public static String MD5EncodeUtf8(String orgin) {
-        orgin = orgin ;
+        orgin = orgin + PropertiesUtil.getProperty("password.salt");
         return MD5Encode(orgin, "utf-8");
     }
 }

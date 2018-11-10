@@ -6,10 +6,9 @@ import com.mmall.common.ServerResponse;
 import com.mmall.dao.CategoryMapper;
 import com.mmall.pojo.Category;
 import com.mmall.service.ICategoryService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +19,19 @@ import java.util.Set;
  * Created by 蒙卓明 on 2018/10/21
  */
 @Service("iCategoryService")
-public class CategoryServiceImpl implements ICategoryService{
-
-    private Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
+@Slf4j
+public class CategoryServiceImpl implements ICategoryService {
 
     @Autowired
     private CategoryMapper categoryMapper;
 
+    /**
+     * 添加分类
+     *
+     * @param categoryName 分类名称
+     * @param parentId     父类ID
+     * @return
+     */
     @Override
     public ServerResponse<String> addCategory(String categoryName, Integer parentId) {
 
@@ -47,6 +52,13 @@ public class CategoryServiceImpl implements ICategoryService{
         return ServerResponse.createBySuccessMessage("添加品类成功");
     }
 
+    /**
+     * 修改分类名称
+     *
+     * @param categoryName 新分类名称
+     * @param categoryId   分类ID
+     * @return
+     */
     @Override
     public ServerResponse<String> updateCategoryName(String categoryName, Integer categoryId) {
 
@@ -65,12 +77,18 @@ public class CategoryServiceImpl implements ICategoryService{
         return ServerResponse.createByErrorMessage("更新品类名成功");
     }
 
+    /**
+     * 获取当前分类下的所有下一级子分类
+     *
+     * @param categoryId 分类ID
+     * @return
+     */
     @Override
     public ServerResponse<List<Category>> getChildParallelCategories(Integer categoryId) {
 
         List<Category> categories = categoryMapper.selectChildCategoriesByParentId(categoryId);
         if (CollectionUtils.isEmpty(categories)) {
-            logger.info("未找到当前分类的子分类");
+            log.info("未找到当前分类的子分类");
         }
         return ServerResponse.createBySuccess(categories);
     }
@@ -86,6 +104,7 @@ public class CategoryServiceImpl implements ICategoryService{
 
     /**
      * 递归获取当前分类下的所有子分类
+     *
      * @param categoryId
      * @param categorySet
      * @return

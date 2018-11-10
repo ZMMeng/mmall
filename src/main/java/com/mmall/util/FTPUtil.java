@@ -1,9 +1,10 @@
 package com.mmall.util;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,9 +16,10 @@ import java.util.List;
  *
  * Created by 蒙卓明 on 2018/10/24
  */
+@Getter
+@Setter
+@Slf4j
 public class FTPUtil {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(FTPUtil.class);
 
     private static String ftpIp = PropertiesUtil.getProperty("ftp.server.ip", "192.168.116.134");
     private static String ftpUsername = PropertiesUtil.getProperty("ftp.username", "ftpuser");
@@ -36,54 +38,27 @@ public class FTPUtil {
         this.password = password;
     }
 
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public FTPClient getFtpClient() {
-        return ftpClient;
-    }
-
-    public void setFtpClient(FTPClient ftpClient) {
-        this.ftpClient = ftpClient;
-    }
-
+    /**
+     * 供外部调用的FTP上传文件的接口
+     * @param fileList 文件列表
+     * @return
+     * @throws IOException
+     */
     public static boolean uploadFile(List<File> fileList) throws IOException {
         FTPUtil ftpUtil = new FTPUtil(ftpIp, 21, ftpUsername, ftpPassword);
-        LOGGER.info("开始连接FTP服务器");
+        log.info("开始连接FTP服务器");
         boolean result = ftpUtil.uploadFile("img", fileList);
-        LOGGER.info("上传结束，上传结果为{}", result);
+        log.info("上传结束，上传结果为{}", result);
         return result;
     }
 
+    /**
+     * 从服务器向FTP上传文件
+     * @param remotePath 目标路径
+     * @param fileList 文件列表
+     * @return
+     * @throws IOException
+     */
     private boolean uploadFile(String remotePath, List<File> fileList) throws IOException {
         boolean uploaded = true;
         FileInputStream fis = null;
@@ -106,7 +81,7 @@ public class FTPUtil {
                 ftpClient.storeFile(file.getName(), fis);
             }
         } catch (IOException e) {
-            LOGGER.error("上传文件异常", e);
+            log.error("上传文件异常", e);
             uploaded = false;
         } finally {
             if (fis != null) {
@@ -133,7 +108,7 @@ public class FTPUtil {
             ftpClient.connect(ip, port);
             isSuccess = ftpClient.login(username, password);
         } catch (IOException e) {
-            LOGGER.error("连接FTP服务器异常", e);
+            log.error("连接FTP服务器异常", e);
         }
         return isSuccess;
     }

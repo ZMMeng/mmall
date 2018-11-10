@@ -2,7 +2,6 @@ package com.mmall.controller.backend;
 
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
-import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.Product;
@@ -10,7 +9,10 @@ import com.mmall.pojo.User;
 import com.mmall.service.IFileService;
 import com.mmall.service.IProductService;
 import com.mmall.service.IUserService;
+import com.mmall.util.CookieUtil;
+import com.mmall.util.JsonUtil;
 import com.mmall.util.PropertiesUtil;
+import com.mmall.util.RedisPoolUtil;
 import com.mmall.vo.ProductDetailVo;
 import com.mmall.vo.ProductListVo;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
@@ -47,16 +48,26 @@ public class ProductManageController {
      * 保存产品，实现新增产品或更新产品
      *
      * @param product 产品
-     * @param session session
+     * @param request 请求
      * @return
      */
     @RequestMapping(value = "save_product.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<String> saveProduct(Product product, HttpSession session) {
+    public ServerResponse<String> saveProduct(Product product, HttpServletRequest request) {
 
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        //从请求的Cookie中获取登陆令牌属性值
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (loginToken == null) {
+            return ServerResponse.createByErrorMessage("用户未登录");
+        }
+        //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        //反序列化为User对象
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "请先登录");
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),
+                    "请先登录");
         }
 
         //判断是否是管理员
@@ -73,16 +84,26 @@ public class ProductManageController {
      *
      * @param id      产品id
      * @param status  销售状态
-     * @param session session
+     * @param request 请求
      * @return
      */
     @RequestMapping(value = "set_sale_status.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<String> setSaleStatus(Integer id, Integer status, HttpSession session) {
+    public ServerResponse<String> setSaleStatus(Integer id, Integer status, HttpServletRequest request) {
 
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        //从请求的Cookie中获取登陆令牌属性值
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (loginToken == null) {
+            return ServerResponse.createByErrorMessage("用户未登录");
+        }
+        //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        //反序列化为User对象
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "请先登录");
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),
+                    "请先登录");
         }
 
         //判断是否是管理员
@@ -98,16 +119,26 @@ public class ProductManageController {
      * 获取产品详情
      *
      * @param id      产品id
-     * @param session session
+     * @param request 请求
      * @return
      */
     @RequestMapping(value = "get_product_detail.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<ProductDetailVo> getProductDetail(Integer id, HttpSession session) {
+    public ServerResponse<ProductDetailVo> getProductDetail(Integer id, HttpServletRequest request) {
 
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        //从请求的Cookie中获取登陆令牌属性值
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (loginToken == null) {
+            return ServerResponse.createByErrorMessage("用户未登录");
+        }
+        //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        //反序列化为User对象
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "请先登录");
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),
+                    "请先登录");
         }
 
         //判断是否是管理员
@@ -124,7 +155,7 @@ public class ProductManageController {
      *
      * @param pageNum  当前页数
      * @param pageSize 页面容量
-     * @param session  session
+     * @param request  请求
      * @return
      */
     @RequestMapping(value = "get_product_list.do", method = RequestMethod.GET)
@@ -132,10 +163,21 @@ public class ProductManageController {
     public ServerResponse<PageInfo<ProductListVo>> getProductList(
             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-            HttpSession session) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+            HttpServletRequest request) {
+
+        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        //从请求的Cookie中获取登陆令牌属性值
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (loginToken == null) {
+            return ServerResponse.createByErrorMessage("用户未登录");
+        }
+        //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        //反序列化为User对象
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "请先登录");
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),
+                    "请先登录");
         }
 
         //判断是否是管理员
@@ -153,7 +195,7 @@ public class ProductManageController {
      * @param productId   产品ID
      * @param pageNum     当前页数
      * @param pageSize    页面容量
-     * @param session     session
+     * @param request     请求
      * @return
      */
     @RequestMapping(value = "search_product.do", method = RequestMethod.GET)
@@ -162,11 +204,21 @@ public class ProductManageController {
             String productName, Integer productId,
             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-            HttpSession session) {
+            HttpServletRequest request) {
 
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        //从请求的Cookie中获取登陆令牌属性值
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (loginToken == null) {
+            return ServerResponse.createByErrorMessage("用户未登录");
+        }
+        //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        //反序列化为User对象
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "请先登录");
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),
+                    "请先登录");
         }
 
         //判断是否是管理员
@@ -191,10 +243,20 @@ public class ProductManageController {
             @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile,
             HttpServletRequest request) {
 
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        //HttpSession session = request.getSession();
+        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        //从请求的Cookie中获取登陆令牌属性值
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (loginToken == null) {
+            return ServerResponse.createByErrorMessage("用户未登录");
+        }
+        //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        //反序列化为User对象
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "请先登录");
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),
+                    "请先登录");
         }
 
         //判断是否是管理员
@@ -203,10 +265,10 @@ public class ProductManageController {
             return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
         }
 
-        String path = session.getServletContext().getRealPath("upload");
+        String path = request.getSession().getServletContext().getRealPath("upload");
         String targetFileName = iFileService.uploadFileName(multipartFile, path);
-        String url = PropertiesUtil.getProperty("ftp.server.http.prefix", "http://img.bigdata.com/")
-                + targetFileName;
+        String url = PropertiesUtil.getProperty("ftp.server.http.prefix",
+                "http://img.bigdata.com/") + targetFileName;
 
         Map<String, String> fileMap = Maps.newHashMap();
         fileMap.put("uri", targetFileName);
@@ -219,8 +281,8 @@ public class ProductManageController {
      * 富文本中的文件上传
      *
      * @param multipartFile 上传文件名
-     * @param request request
-     * @param response response
+     * @param request       request
+     * @param response      response
      * @return 使用的是simditor插件，需要返回特殊的JSON数据
      */
     @RequestMapping(value = "upload_rich_text_img.do", method = RequestMethod.POST)
@@ -230,8 +292,19 @@ public class ProductManageController {
             HttpServletRequest request, HttpServletResponse response) {
 
         Map<String, Object> resultMap = Maps.newHashMap();
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        //HttpSession session = request.getSession();
+        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        //从请求的Cookie中获取登陆令牌属性值
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (loginToken == null) {
+            resultMap.put("success", false);
+            resultMap.put("msg", "请先登录");
+            return resultMap;
+        }
+        //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        //反序列化为User对象
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             resultMap.put("success", false);
             resultMap.put("msg", "请先登录");
@@ -245,15 +318,15 @@ public class ProductManageController {
             return resultMap;
         }
 
-        String path = session.getServletContext().getRealPath("upload");
+        String path = request.getSession().getServletContext().getRealPath("upload");
         String targetFileName = iFileService.uploadFileName(multipartFile, path);
         if (StringUtils.isBlank(targetFileName)) {
             resultMap.put("success", false);
             resultMap.put("msg", "上传失败");
             return resultMap;
         }
-        String url = PropertiesUtil.getProperty("ftp.server.http.prefix", "http://img.bigdata.com/")
-                + targetFileName;
+        String url = PropertiesUtil.getProperty("ftp.server.http.prefix",
+                "http://img.bigdata.com/") + targetFileName;
         resultMap.put("success", true);
         resultMap.put("msg", "上传成功");
         resultMap.put("file_path", url);

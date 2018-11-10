@@ -6,6 +6,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import java.io.Serializable;
 
 /**
+ * 通用前后端交互对象
  * Created by 蒙卓明 on 2018/10/21
  */
 //当value为null时，相应的key不出现在json中
@@ -17,7 +18,7 @@ public class ServerResponse<T> implements Serializable {
     private T data;
 
     private ServerResponse(int status) {
-        this.status = status ;
+        this.status = status;
     }
 
     private ServerResponse(int status, T data) {
@@ -38,6 +39,7 @@ public class ServerResponse<T> implements Serializable {
 
     /**
      * 状态是否成功，同时不显示在json序列化结果中
+     *
      * @return
      */
     @JsonIgnore

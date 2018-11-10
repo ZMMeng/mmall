@@ -14,15 +14,25 @@ public class Const {
     public static final String USERNAME = "username";
 
     //声明分组常量
+
+    /**
+     * 产品列表排序相关参数
+     */
     public interface ProductListOrderBy {
         Set<String> PRICE_ASC_DESC = Sets.newHashSet("price_desc", "price_asc");
     }
 
+    /**
+     * 角色相关参数
+     */
     public interface Role {
         int ROLE_CUSTOMER = 0; //普通用户
         int ROLE_ADMIN = 1; //管理员
     }
 
+    /**
+     * 购物车相关参数
+     */
     public interface CartMarker {
         //产品在购物栏中为选中状态
         int CHECKED = 1;
@@ -34,6 +44,9 @@ public class Const {
         String LIMIT_NUM_SUCCESS = "LIMIT_NUM_SUCCESS";
     }
 
+    /**
+     * 支付宝回调相关参数
+     */
     public interface AlipayCallback {
 
         String TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY";
@@ -44,6 +57,24 @@ public class Const {
 
     }
 
+    /**
+     * Redis缓存相关参数
+     */
+    public interface RedisCacheExTime {
+        // 30 min
+        int REDIS_SESSION_EXTIME = 60 * 30;
+
+        int REDIS_FORGET_TOKEN_EXTIME = 60 * 60 * 12;
+    }
+
+    public interface CookieExTime {
+        // 1 year
+        int COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+    }
+
+    /**
+     * 产品状态枚举
+     */
     public enum ProductStatusEnum {
         ON_SALE("在售", 1),
         ;
@@ -65,6 +96,9 @@ public class Const {
         }
     }
 
+    /**
+     * 支付类型枚举
+     */
     public enum PaymentTypeEnum {
 
         ONLINE_PAY("在线支付", 1)
@@ -96,6 +130,9 @@ public class Const {
         }
     }
 
+    /**
+     * 订单状态枚举
+     */
     public enum OrderStatusEnum {
 
         CANCELED("已取消", 0),
@@ -132,6 +169,9 @@ public class Const {
         }
     }
 
+    /**
+     * 支付平台枚举
+     */
     public enum PayPlatformEnum {
 
         ALIPAY("支付宝", 1)
