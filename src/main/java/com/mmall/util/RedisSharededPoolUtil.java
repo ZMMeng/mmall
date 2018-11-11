@@ -1,15 +1,14 @@
 package com.mmall.util;
 
-import com.mmall.common.RedisPool;
+import com.mmall.common.RedisShardedPool;
 import lombok.extern.slf4j.Slf4j;
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.ShardedJedis;
 
 /**
- * Redis工具类
- * Created by 蒙卓明 on 2018/11/9
+ * Created by 蒙卓明 on 2018/11/11
  */
 @Slf4j
-public class RedisPoolUtil {
+public class RedisSharededPoolUtil {
 
     /**
      * 在Redis缓存中添加键值对
@@ -19,20 +18,20 @@ public class RedisPoolUtil {
      * @return
      */
     public static String set(String key, String value) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         String result = null;
 
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.set(key, value);
         } catch (Exception e) {
             log.error("set key: {} value: {} error: {}", key, value, e);
             //出现异常，表示连接发生损坏
-            RedisPool.returnBrokenJedis(jedis);
+            RedisShardedPool.returnBrokenJedis(jedis);
             return result;
         }
         //未发生异常，表示连接正常
-        RedisPool.returnJedis(jedis);
+        RedisShardedPool.returnJedis(jedis);
         return result;
     }
 
@@ -45,20 +44,20 @@ public class RedisPoolUtil {
      * @return
      */
     public static String setEx(String key, String value, int exTime) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         String result = null;
 
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.setex(key, exTime, value);
         } catch (Exception e) {
             log.error("set key: {} value: {} error: {}", key, value, e);
             //出现异常，表示连接发生损坏
-            RedisPool.returnBrokenJedis(jedis);
+            RedisShardedPool.returnBrokenJedis(jedis);
             return result;
         }
         //未发生异常，表示连接正常
-        RedisPool.returnJedis(jedis);
+        RedisShardedPool.returnJedis(jedis);
         return result;
     }
 
@@ -70,20 +69,20 @@ public class RedisPoolUtil {
      * @return
      */
     public static Long expire(String key, int exTime) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         Long result = null;
 
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.expire(key, exTime);
         } catch (Exception e) {
             log.error("expire key: {} error: {}", key, e);
             //出现异常，表示连接发生损坏
-            RedisPool.returnBrokenJedis(jedis);
+            RedisShardedPool.returnBrokenJedis(jedis);
             return result;
         }
         //未发生异常，表示连接正常
-        RedisPool.returnJedis(jedis);
+        RedisShardedPool.returnJedis(jedis);
         return result;
     }
 
@@ -94,20 +93,20 @@ public class RedisPoolUtil {
      * @return
      */
     public static String get(String key) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         String result = null;
 
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.get(key);
         } catch (Exception e) {
             log.error("get key: {} error: {}", key, e);
             //出现异常，表示连接发生损坏
-            RedisPool.returnBrokenJedis(jedis);
+            RedisShardedPool.returnBrokenJedis(jedis);
             return result;
         }
         //未发生异常，表示连接正常
-        RedisPool.returnJedis(jedis);
+        RedisShardedPool.returnJedis(jedis);
         return result;
     }
 
@@ -118,21 +117,20 @@ public class RedisPoolUtil {
      * @return
      */
     public static Long del(String key) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         Long result = null;
 
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.del(key);
         } catch (Exception e) {
             log.error("del key: {} error: {}", key, e);
             //出现异常，表示连接发生损坏
-            RedisPool.returnBrokenJedis(jedis);
+            RedisShardedPool.returnBrokenJedis(jedis);
             return result;
         }
         //未发生异常，表示连接正常
-        RedisPool.returnJedis(jedis);
+        RedisShardedPool.returnJedis(jedis);
         return result;
     }
-
 }

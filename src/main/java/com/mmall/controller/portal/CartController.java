@@ -1,13 +1,13 @@
 package com.mmall.controller.portal;
 
 import com.mmall.common.Const;
+import com.mmall.util.RedisSharededPoolUtil;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.ICartService;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JsonUtil;
-import com.mmall.util.RedisPoolUtil;
 import com.mmall.vo.CartVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,7 +44,7 @@ public class CartController {
             return ServerResponse.createByErrorMessage("用户未登录");
         }
         //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         //反序列化为User对象
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
@@ -74,7 +74,7 @@ public class CartController {
             return ServerResponse.createByErrorMessage("用户未登录");
         }
         //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         //反序列化为User对象
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
@@ -104,7 +104,7 @@ public class CartController {
             return ServerResponse.createByErrorMessage("用户未登录");
         }
         //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         //反序列化为User对象
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
@@ -132,7 +132,7 @@ public class CartController {
             return ServerResponse.createByErrorMessage("用户未登录");
         }
         //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         //反序列化为User对象
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
@@ -160,7 +160,7 @@ public class CartController {
             return ServerResponse.createByErrorMessage("用户未登录");
         }
         //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         //反序列化为User对象
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
@@ -188,7 +188,7 @@ public class CartController {
             return ServerResponse.createByErrorMessage("用户未登录");
         }
         //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         //反序列化为User对象
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
@@ -216,7 +216,7 @@ public class CartController {
             return ServerResponse.createByErrorMessage("用户未登录");
         }
         //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         //反序列化为User对象
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
@@ -244,7 +244,7 @@ public class CartController {
             return ServerResponse.createByErrorMessage("用户未登录");
         }
         //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         //反序列化为User对象
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
@@ -272,7 +272,7 @@ public class CartController {
             return ServerResponse.createByErrorMessage("用户未登录");
         }
         //根据登陆令牌属性值，从Redis缓存中获取User对象的JSON字符串
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         //反序列化为User对象
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
