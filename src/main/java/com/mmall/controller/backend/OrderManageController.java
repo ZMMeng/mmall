@@ -47,7 +47,7 @@ public class OrderManageController {
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             HttpServletRequest request) {
 
-        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        /*//User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
         if (loginToken == null) {
@@ -66,7 +66,7 @@ public class OrderManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
-        }
+        }*/
 
         return iOrderService.manageOrderList(pageNum, pageSize);
     }
@@ -82,7 +82,7 @@ public class OrderManageController {
     @ResponseBody
     public ServerResponse<OrderVo> getOrderDetail(Long orderNo, HttpServletRequest request) {
 
-        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        /*//User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
         if (loginToken == null) {
@@ -101,7 +101,8 @@ public class OrderManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
-        }
+        }*/
+
         return iOrderService.manageOrderDetail(orderNo);
     }
 
@@ -122,7 +123,7 @@ public class OrderManageController {
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             HttpServletRequest request) {
 
-        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        /*//User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
         if (loginToken == null) {
@@ -141,7 +142,8 @@ public class OrderManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
-        }
+        }*/
+
         return iOrderService.manageSearchOrder(orderNo, pageNum, pageSize);
     }
 
@@ -156,7 +158,7 @@ public class OrderManageController {
     @ResponseBody
     public ServerResponse<String> sendOrderGoods(Long orderNo, HttpServletRequest request) {
 
-        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        /*//User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
         if (loginToken == null) {
@@ -175,7 +177,7 @@ public class OrderManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
-        }
+        }*/
 
         return iOrderService.manageSendOrderGoods(orderNo);
     }

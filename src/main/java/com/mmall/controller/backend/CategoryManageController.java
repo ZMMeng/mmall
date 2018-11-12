@@ -46,7 +46,7 @@ public class CategoryManageController {
             String categoryName, @RequestParam(value = "parentId", defaultValue = "0") int parentId,
             HttpServletRequest request) {
 
-        //判断是否登录
+       /* //判断是否登录
         //User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
@@ -66,7 +66,7 @@ public class CategoryManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return adminResponse;
-        }
+        }*/
 
         return iCategoryService.addCategory(categoryName, parentId);
     }
@@ -84,7 +84,7 @@ public class CategoryManageController {
     public ServerResponse<String> setCategoryName(String categoryName, int categoryId,
                                                   HttpServletRequest request) {
 
-        //判断是否登录
+        /*//判断是否登录
         //User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
@@ -104,7 +104,7 @@ public class CategoryManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return adminResponse;
-        }
+        }*/
 
         return iCategoryService.updateCategoryName(categoryName, categoryId);
     }
@@ -122,7 +122,7 @@ public class CategoryManageController {
             @RequestParam(value = "categoryId", defaultValue = "0") int categoryId,
             HttpServletRequest request) {
 
-        //判断是否登录
+        /*//判断是否登录
         //User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
@@ -142,7 +142,7 @@ public class CategoryManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
-        }
+        }*/
 
         //查找当前品类的所有下一级品类
         return iCategoryService.getChildParallelCategories(categoryId);
@@ -161,7 +161,7 @@ public class CategoryManageController {
             @RequestParam(value = "categoryId", defaultValue = "0") int categoryId,
             HttpServletRequest request) {
 
-        //判断是否登录
+        /*//判断是否登录
         //User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
@@ -181,7 +181,7 @@ public class CategoryManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
-        }
+        }*/
 
         return iCategoryService.getChildRecursiveCategories(categoryId);
     }

@@ -35,6 +35,7 @@
             </bean>
             <!-- Spring MVC前端JSON转换器 -->
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <!-- 设置内容类型，这里因为使用前后端分离，因此只设置JSON格式 -->
                 <property name="supportedMediaTypes">
                     <list>
                         <value>application/json;charset=UTF-8</value>
@@ -54,5 +55,17 @@
         <!-- 默认编码 -->
         <property name="defaultEncoding" value="UTF-8" />
     </bean>
+
+    <mvc:interceptors>
+        <!-- 若将bean配置在此处，则会对项目的所有请求进行拦截 -->
+        <mvc:interceptor>
+            <!-- manage/xx.do /manage/* -->
+            <!-- manage/xx/yy.do /manage/** -->
+            <mvc:mapping path="/manage/**"/>
+            <!-- 不拦截后台登陆请求 -->
+            <mvc:exclude-mapping path="/manage/user/login.do"/>
+            <bean class="com.mmall.controller.common.interceptor.AuthorityInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
 
 </beans>

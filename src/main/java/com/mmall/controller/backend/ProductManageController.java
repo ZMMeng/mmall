@@ -55,7 +55,7 @@ public class ProductManageController {
     @ResponseBody
     public ServerResponse<String> saveProduct(Product product, HttpServletRequest request) {
 
-        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        /*//User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
         if (loginToken == null) {
@@ -74,7 +74,7 @@ public class ProductManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
-        }
+        }*/
 
         return iProductService.insertOrUpdateProduct(product);
     }
@@ -91,7 +91,7 @@ public class ProductManageController {
     @ResponseBody
     public ServerResponse<String> setSaleStatus(Integer id, Integer status, HttpServletRequest request) {
 
-        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        /*//User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
         if (loginToken == null) {
@@ -110,7 +110,7 @@ public class ProductManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
-        }
+        }*/
 
         return iProductService.setSaleStatus(id, status);
     }
@@ -126,7 +126,7 @@ public class ProductManageController {
     @ResponseBody
     public ServerResponse<ProductDetailVo> getProductDetail(Integer id, HttpServletRequest request) {
 
-        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        /*//User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
         if (loginToken == null) {
@@ -145,7 +145,7 @@ public class ProductManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
-        }
+        }*/
 
         return iProductService.manageProductDetail(id);
     }
@@ -165,7 +165,7 @@ public class ProductManageController {
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             HttpServletRequest request) {
 
-        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        /*//User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
         if (loginToken == null) {
@@ -184,7 +184,8 @@ public class ProductManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
-        }
+        }*/
+
         return iProductService.getProductList(pageNum, pageSize);
     }
 
@@ -206,7 +207,7 @@ public class ProductManageController {
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             HttpServletRequest request) {
 
-        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        /*//User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
         if (loginToken == null) {
@@ -225,7 +226,7 @@ public class ProductManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
-        }
+        }*/
 
         return iProductService.searchProduct(productName, productId, pageNum, pageSize);
     }
@@ -243,7 +244,7 @@ public class ProductManageController {
             @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile,
             HttpServletRequest request) {
 
-        //HttpSession session = request.getSession();
+        /*//HttpSession session = request.getSession();
         //User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
@@ -263,7 +264,7 @@ public class ProductManageController {
         ServerResponse<String> adminResponse = iUserService.checkAdminRole(user);
         if (!adminResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
-        }
+        }*/
 
         String path = request.getSession().getServletContext().getRealPath("upload");
         String targetFileName = iFileService.uploadFileName(multipartFile, path);
@@ -292,7 +293,7 @@ public class ProductManageController {
             HttpServletRequest request, HttpServletResponse response) {
 
         Map<String, Object> resultMap = Maps.newHashMap();
-        //HttpSession session = request.getSession();
+        /*//HttpSession session = request.getSession();
         //User user = (User) session.getAttribute(Const.CURRENT_USER);
         //从请求的Cookie中获取登陆令牌属性值
         String loginToken = CookieUtil.readLoginToken(request);
@@ -316,7 +317,7 @@ public class ProductManageController {
             resultMap.put("success", false);
             resultMap.put("msg", "当前用户无权限操作，需要管理员权限");
             return resultMap;
-        }
+        }*/
 
         String path = request.getSession().getServletContext().getRealPath("upload");
         String targetFileName = iFileService.uploadFileName(multipartFile, path);
