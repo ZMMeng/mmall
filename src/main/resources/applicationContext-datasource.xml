@@ -14,7 +14,7 @@
      base-package：扫描的基本包路径
      annotation-config：是否激活属性注入注解
 -->
-    <context:component-scan base-package="com.mmall" annotation-config="true" />
+    <!--<context:component-scan base-package="com.mmall" annotation-config="true" />-->
 
     <!-- 读取配置文件的Bean对象，在Spring容器启动，并拦截对Bean进行初始化 -->
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

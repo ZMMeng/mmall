@@ -1,7 +1,8 @@
 package com.mmall.common;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+//import org.codehaus.jackson.annotate.JsonIgnore;
+//import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.io.Serializable;
 
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * Created by 蒙卓明 on 2018/10/21
  */
 //当value为null时，相应的key不出现在json中
+//@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ServerResponse<T> implements Serializable {
 
@@ -42,7 +44,8 @@ public class ServerResponse<T> implements Serializable {
      *
      * @return
      */
-    @JsonIgnore
+    //@JsonIgnore
+    @JsonSerialize
     public boolean isSuccess() {
         return this.status == ResponseCode.SUCCESS.getCode();
     }
