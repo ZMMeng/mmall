@@ -35,4 +35,6 @@ public interface IOrderService {
     ServerResponse<String> alipayCallback(Map<String, String> paramterMap);
 
     ServerResponse<String> queryOrderPayStatus(Integer userId, Long orderNo);
+
+    void closeOrder(int hour);
 }
