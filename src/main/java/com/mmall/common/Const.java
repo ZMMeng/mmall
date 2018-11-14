@@ -70,9 +70,19 @@ public class Const {
         int REDIS_FORGET_TOKEN_EXTIME = 60 * 60 * 12;
     }
 
+    /**
+     * Cookie有效时间
+     */
     public interface CookieExTime {
         // 1 year
         int COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+    }
+
+    /**
+     * Redis分布式锁
+     */
+    public interface RedisDistributeLock {
+        String CLOSE_ORDER_TASK_LOCK = "CLOSE_ORDER_TASK_LOCK";
     }
 
     /**

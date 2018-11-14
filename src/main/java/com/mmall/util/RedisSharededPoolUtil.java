@@ -133,4 +133,55 @@ public class RedisSharededPoolUtil {
         RedisShardedPool.returnJedis(jedis);
         return result;
     }
+
+    /**
+     * 在Redis缓存中设置键值对
+     *
+     * @param key   键
+     * @param value 值
+     * @return 如果键已存在，返回0；如果键不存在，返回1
+     */
+    public static Long setnx(String key, String value) {
+
+        ShardedJedis jedis = null;
+        Long result = null;
+
+        try {
+            jedis = RedisShardedPool.getJedis();
+            result = jedis.setnx(key, value);
+        } catch (Exception e) {
+            log.error("setnx key: {} error: {}", key, e);
+            //出现异常，表示连接发生损坏
+            RedisShardedPool.returnBrokenJedis(jedis);
+            return result;
+        }
+        //未发生异常，表示连接正常
+        RedisShardedPool.returnJedis(jedis);
+        return result;
+    }
+
+    /**
+     * 设置键的新值，同时返回旧值，getset具有原子性
+     *
+     * @param key      键
+     * @param newValue 新值
+     * @return 旧值
+     */
+    public static String getSet(String key, String newValue) {
+        ShardedJedis jedis = null;
+        String oldValue = null;
+
+        try {
+            jedis = RedisShardedPool.getJedis();
+            oldValue = jedis.getSet(key, newValue);
+        } catch (Exception e) {
+            log.error("getset key: {} value: {} error: {}", key, newValue, e);
+            //出现异常，表示连接发生损坏
+            RedisShardedPool.returnBrokenJedis(jedis);
+            return oldValue;
+        }
+        //未发生异常，表示连接正常
+        RedisShardedPool.returnJedis(jedis);
+        return oldValue;
+    }
 }
