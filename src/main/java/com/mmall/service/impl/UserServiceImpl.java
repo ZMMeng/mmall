@@ -198,6 +198,9 @@ public class UserServiceImpl implements IUserService {
             ServerResponse.createByErrorMessage("修改密码失败");
         }
 
+        //此时修改密码已经成功，应该将Token删除
+        RedisSharededPoolUtil.del(Const.TOKEN_PREFIX + username);
+
         return ServerResponse.createBySuccessMessage("修改密码成功");
     }
 

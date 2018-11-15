@@ -1,16 +1,19 @@
 package com.mmall.task;
 
 import com.mmall.common.Const;
+import com.mmall.common.RedissonManager;
 import com.mmall.service.IOrderService;
 import com.mmall.util.PropertiesUtil;
 import com.mmall.util.RedisSharededPoolUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 定时任务
@@ -22,6 +25,9 @@ public class CloseOrderTask {
 
     @Autowired
     private IOrderService iOrderService;
+
+    @Autowired
+    private RedissonManager redissonManager;
 
     /**
      * 每隔一分钟进行关闭两小时前未付款的订单操作
@@ -90,6 +96,47 @@ public class CloseOrderTask {
         }
 
         log.info("关闭订单定时任务结束");
+    }
+
+    /**
+     * 每隔一分钟进行关闭两小时前未付款的订单操作
+     * 使用Redisson管理分布式锁
+     */
+    //@Scheduled(cron = "0 */1 * * * ?")
+    public void closeOrderTaskV4() {
+        //声明锁
+        RLock lock = redissonManager.getRedisson().getLock(Const.RedisDistributeLock.CLOSE_ORDER_TASK_LOCK);
+        //尝试获取锁
+        boolean getLock = false;
+        try {
+            //第一个参数表示等待时间
+            //第二个参数表示锁释放时间
+            //等待时间不宜过大，如果进程A在等待的过程中，进程B获取锁完成业务逻辑后释放锁
+            //那么进程A将会在这一轮中获取锁，即一轮中有两个进程获取到锁
+            //最好将等待时间设置为0
+            getLock = lock.tryLock(0, 5, TimeUnit.SECONDS);
+            if (getLock) {
+                log.info("Redisson获取分布式锁：{}，ThreadName：{}",
+                        Const.RedisDistributeLock.CLOSE_ORDER_TASK_LOCK, Thread.currentThread().getName());
+                int hour = Integer.parseInt(PropertiesUtil.getProperty("close.order.task.time.hour",
+                        "2"));
+                //iOrderService.closeOrder(hour);
+            } else {
+                log.info("Redisson没有获取分布式锁：{}，ThreadName：{}",
+                        Const.RedisDistributeLock.CLOSE_ORDER_TASK_LOCK, Thread.currentThread().getName());
+            }
+        } catch (InterruptedException e) {
+            log.error("Redisson获取分布式锁发生异常", e);
+        } finally {
+            if (!getLock) {
+                //未获取锁，直接返回
+                return;
+            }
+            //获取锁，需释放锁
+            lock.unlock();
+            log.info("Redisson释放分布式锁：{}，ThreadName：{}",
+                    Const.RedisDistributeLock.CLOSE_ORDER_TASK_LOCK, Thread.currentThread().getName());
+        }
     }
 
     /**
