@@ -1,5 +1,6 @@
 package com.mmall.service.impl;
 
+import com.google.common.collect.Maps;
 import com.mmall.common.Const;
 import com.mmall.common.ServerResponse;
 import com.mmall.dao.UserMapper;
@@ -7,16 +8,24 @@ import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
 import com.mmall.util.MD5Util;
 import com.mmall.util.RedisSharededPoolUtil;
+import com.mmall.util.VerifyCodeUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.Map;
 import java.util.UUID;
 
 /**
  * Created by 蒙卓明 on 2018/10/21
  */
 @Service("iUserService")
+@Slf4j
 public class UserServiceImpl implements IUserService {
 
     @Autowired
@@ -92,7 +101,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ServerResponse<String> checkValid(String str, String type) {
         //注意isNotBlank()和isNotEmpty()的区别
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(type)) {
+        if (StringUtils.isNotBlank(type)) {
             //开始校验
             int resultCount;
             switch (type) {
@@ -133,7 +142,7 @@ public class UserServiceImpl implements IUserService {
         }
 
         String question = userMapper.selectQuestionByUsername(username);
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(question)) {
+        if (StringUtils.isNotBlank(question)) {
             return ServerResponse.createBySuccess(question);
         }
 
@@ -159,6 +168,51 @@ public class UserServiceImpl implements IUserService {
             return ServerResponse.createBySuccess(forgetToken);
         }
         return ServerResponse.createByErrorMessage("问题答案错误");
+    }
+
+    /**
+     * 生成验证码
+     *
+     * @return
+     */
+    @Override
+    public ServerResponse<Map<String, String>> getVerifyCode() {
+
+        Map<String, String> verifyMap = Maps.newHashMap();
+
+        String verifyCodeText = VerifyCodeUtil.getVerifyCodeText(4);
+
+        byte[] verifyCodePicArray;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            VerifyCodeUtil.outputImage(100, 30, baos, verifyCodeText);
+            verifyCodePicArray = baos.toByteArray();
+            String verifyCodePicBase64Str = Base64.getEncoder().encodeToString(verifyCodePicArray);
+            verifyMap.put("verifyCodeText", verifyCodeText);
+            verifyMap.put("verifyCodePicBase64Str", verifyCodePicBase64Str);
+            return ServerResponse.createBySuccess(verifyMap);
+        } catch (IOException e) {
+            log.error("生成验证码失败", e);
+        } finally {
+            IOUtils.closeQuietly(baos);
+        }
+        return ServerResponse.createByErrorMessage("生成验证码失败");
+    }
+
+    /**
+     * 校验验证码
+     *
+     * @param verifyCodeText 正确的验证码
+     * @param verifyCode     用户输入的验证码
+     * @return
+     */
+    @Override
+    public ServerResponse<String> checkVerifyCode(String verifyCodeText, String verifyCode) {
+
+        if (StringUtils.equals(verifyCodeText, verifyCode)) {
+            return ServerResponse.createBySuccessMessage("验证码校验通过");
+        }
+        return ServerResponse.createByErrorMessage("验证码不正确");
     }
 
     /**

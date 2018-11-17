@@ -27,7 +27,11 @@ public class CookieUtil {
      * @param token    令牌
      */
     public static void writeLoginToken(HttpServletResponse response, String token) {
-        Cookie cookie = new Cookie(COOKIE_NAME, token);
+        addCookie(COOKIE_NAME, token, response);
+    }
+
+    public static void addCookie(String cookieName, String cookieValue, HttpServletResponse response) {
+        Cookie cookie = new Cookie(cookieName, cookieValue);
         cookie.setDomain(COOKIE_DOMAIN);
         //设置cookie在项目的根目录下
         cookie.setPath("/");
@@ -48,6 +52,22 @@ public class CookieUtil {
      * @return
      */
     public static String readLoginToken(HttpServletRequest request) {
+        return getCookieValue(COOKIE_NAME, request);
+    }
+
+    /**
+     * 获取指定Cookie属性值
+     *
+     * @param cookieName Cookie属性名
+     * @param request    请求
+     * @return
+     */
+    public static String getCookieValue(String cookieName, HttpServletRequest request) {
+
+        if (StringUtils.isEmpty(cookieName)) {
+            return null;
+        }
+
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             return null;
@@ -55,7 +75,7 @@ public class CookieUtil {
 
         for (Cookie cookie : cookies) {
             log.info("read cookieName: {}, cookieValue: {}", cookie.getName(), cookie.getValue());
-            if (StringUtils.equals(cookie.getName(), COOKIE_NAME)) {
+            if (StringUtils.equals(cookie.getName(), cookieName)) {
                 log.info("return cookieName: {}, cookieValue: {}", cookie.getName(), cookie.getValue());
                 return cookie.getValue();
             }
@@ -71,14 +91,29 @@ public class CookieUtil {
      * @param response 响应
      */
     public static void delLoginToken(HttpServletRequest request, HttpServletResponse response) {
+        delCookie(COOKIE_NAME, request, response);
+    }
+
+    /**
+     * 删除指定Cookie
+     * @param cookieName Cookie属性名
+     * @param request 请求
+     * @param response 响应
+     */
+    public static void delCookie(String cookieName, HttpServletRequest request,
+                                 HttpServletResponse response) {
+        if (StringUtils.isEmpty(cookieName)) {
+            return ;
+        }
+
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             return;
         }
 
         for (Cookie cookie : cookies) {
-            if (StringUtils.equals(cookie.getName(), COOKIE_NAME)) {
-                cookie.setDomain(COOKIE_DOMAIN);
+            if (StringUtils.equals(cookie.getName(), cookieName)) {
+                cookie.setDomain(cookieName);
                 cookie.setPath("/");
                 //将maxAge设置成0，表示删除cookie
                 cookie.setMaxAge(0);
@@ -87,6 +122,5 @@ public class CookieUtil {
                 return;
             }
         }
-
     }
 }

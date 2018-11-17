@@ -39,14 +39,16 @@ public class RedisShardedPool {
             PropertiesUtil.getProperty("redis.test.return", "true"));
 
     //Redis1服务器IP
-    private static String redis1Ip = PropertiesUtil.getProperty("redis1.ip");
+    //private static String redis1Ip = PropertiesUtil.getProperty("redis1.ip");
     //Redis服务器端口
-    private static Integer redis1Port = Integer.parseInt(PropertiesUtil.getProperty("redis1.port"));
+    //private static Integer redis1Port = Integer.parseInt(PropertiesUtil.getProperty("redis1.port"));
 
     //Redis1服务器IP
-    private static String redis2Ip = PropertiesUtil.getProperty("redis2.ip");
+    //private static String redis2Ip = PropertiesUtil.getProperty("redis2.ip");
     //Redis服务器端口
-    private static Integer redis2Port = Integer.parseInt(PropertiesUtil.getProperty("redis2.port"));
+    //private static Integer redis2Port = Integer.parseInt(PropertiesUtil.getProperty("redis2.port"));
+
+    private static String redisClusterStr = PropertiesUtil.getProperty("redis.cluster");
 
     private static void initPool() {
 
@@ -61,12 +63,20 @@ public class RedisShardedPool {
         //false直接抛出异常，true是阻塞直到超时
         config.setBlockWhenExhausted(true);
 
-        JedisShardInfo info1 = new JedisShardInfo(redis1Ip, redis1Port);
-        JedisShardInfo info2 = new JedisShardInfo(redis2Ip, redis2Port);
+        //JedisShardInfo info1 = new JedisShardInfo(redis1Ip, redis1Port);
+        //JedisShardInfo info2 = new JedisShardInfo(redis2Ip, redis2Port);
 
         List<JedisShardInfo> jedisShardInfoList = Lists.newArrayList();
-        jedisShardInfoList.add(info1);
-        jedisShardInfoList.add(info2);
+        String[] redisIpPorts = redisClusterStr.split(",");
+        for (String redisIpPort : redisIpPorts) {
+            String[] strs = redisIpPort.split(":");
+            String redisIp = strs[0];
+            Integer redisPort = Integer.parseInt(strs[1]);
+            JedisShardInfo info = new JedisShardInfo(redisIp, redisPort);
+            jedisShardInfoList.add(info);
+        }
+        //jedisShardInfoList.add(info1);
+        //jedisShardInfoList.add(info2);
 
         //Hashing.MURMUR_HASH 表示采用一致性Hash算法
         //Sharded.DEFAULT_KEY_TAG_PATTERN 表示

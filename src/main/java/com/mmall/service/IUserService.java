@@ -3,6 +3,8 @@ package com.mmall.service;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 
+import java.util.Map;
+
 /**
  * Created by 蒙卓明 on 2018/10/21
  */
@@ -27,4 +29,8 @@ public interface IUserService {
     ServerResponse<User> getUserDetailInfo(Integer userId);
 
     ServerResponse<String> checkAdminRole(User user);
+
+    ServerResponse<Map<String, String>> getVerifyCode();
+
+    ServerResponse<String> checkVerifyCode(String verifyCodeText, String verifyCode);
 }

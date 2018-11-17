@@ -37,4 +37,5 @@ Thumbs.db
 # test file
 src/main/java/com/alipay/*
 src/main/test/*
+src/test/*
 

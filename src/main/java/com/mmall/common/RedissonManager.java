@@ -31,7 +31,7 @@ public class RedissonManager {
     //Redis服务器端口
     private static Integer redis2Port = Integer.parseInt(PropertiesUtil.getProperty("redis2.port"));
 
-    @PostConstruct
+    //@PostConstruct
     private void init() {
         config.useSingleServer().setAddress(redis1Ip + ":" + redis1Port);
 

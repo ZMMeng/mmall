@@ -32,6 +32,7 @@
             <version>9.0.0.M18</version>
         </dependency>
 
+        <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -68,12 +69,14 @@
             <version>1.7.3</version>
         </dependency>
 
+        <!-- Spring-MyBatis集成 -->
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
             <version>${org.mybatis.spring.version}</version>
         </dependency>
 
+        <!-- MyBatis -->
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
@@ -92,12 +95,14 @@
             <version>1.9.12</version>
         </dependency>
 
+        <!-- 连接池，可以考虑用Druid替换，以提高性能 -->
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>1.4</version>
         </dependency>
 
+        <!-- 日志处理 -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -112,6 +117,7 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- MySQL -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -124,6 +130,7 @@
             <version>20.0</version>
         </dependency>
 
+        <!-- apache组件 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -136,6 +143,7 @@
             <version>3.2.1</version>
         </dependency>
 
+        <!-- 单元测试 -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -237,6 +245,7 @@
             <version>1.3</version>
         </dependency>
 
+        <!-- Jackson JSON处理工具包 -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -289,11 +298,15 @@
             <version>2.9.0</version>
         </dependency>
 
+        <!-- 个人开发引入 -->
+
+
     </dependencies>
 
     <build>
-        <finalName>mmall</finalName>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
+            <!-- 逆向工程插件 -->
             <plugin>
                 <groupId>org.mybatis.generator</groupId>
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
@@ -303,6 +316,7 @@
                     <overwrite>true</overwrite>
                 </configuration>
             </plugin>
+            <!-- Java编译插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

@@ -16,6 +16,8 @@ public class Const {
 
     public static final String TOKEN_PREFIX = "token_";
 
+    public static final String VERIFY_CODE_PREFIX = "verifyCode_";
+
     //声明分组常量
 
     /**
@@ -68,6 +70,8 @@ public class Const {
         int REDIS_SESSION_EXTIME = 60 * 30;
 
         int REDIS_FORGET_TOKEN_EXTIME = 60 * 60 * 12;
+
+        int REDIS_VERIFY_CODE_EXTIME = 60 * 30;
     }
 
     /**
@@ -83,6 +87,11 @@ public class Const {
      */
     public interface RedisDistributeLock {
         String CLOSE_ORDER_TASK_LOCK = "CLOSE_ORDER_TASK_LOCK";
+    }
+
+    public interface CookieNames {
+        String LOGIN = "mmall_login_token";
+        String VERIFY_CODE = "mmall_verify_code_token";
     }
 
     /**

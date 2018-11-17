@@ -8,6 +8,7 @@ import com.mmall.service.IUserService;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JsonUtil;
 import com.mmall.util.RedisSharededPoolUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 /**
  * Created by 蒙卓明 on 2018/10/20
@@ -52,6 +54,7 @@ public class UserController {
             //session.setAttribute(Const.CURRENT_USER, response.getData());
             //向客户端写入Cookie，以session的ID作为登陆令牌的属性值
             CookieUtil.writeLoginToken(response, session.getId());
+            //CookieUtil.addCookie(Const.CookieNames.LOGIN, Const.);
             //将登陆信息写入Redis缓存，key是session的ID，value是User对象
             RedisSharededPoolUtil.setEx(session.getId(), JsonUtil.obj2String(loginResponse.getData()),
                     Const.RedisCacheExTime.REDIS_SESSION_EXTIME);
@@ -272,5 +275,47 @@ public class UserController {
         }
 
         return iUserService.getUserDetailInfo(user.getId());
+    }
+
+    /**
+     * 获取验证码
+     *
+     * @param session  session
+     * @param response 响应
+     * @return
+     */
+    @RequestMapping(value = "get_verify_code.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<String> getVerifyCode(HttpSession session, HttpServletResponse response) {
+
+        Map<String, String> verifyMap = iUserService.getVerifyCode().getData();
+        String verifyCodeText = verifyMap.get("verifyCodeText");
+        CookieUtil.addCookie(Const.CookieNames.VERIFY_CODE,
+                Const.VERIFY_CODE_PREFIX + session.getId(), response);
+        RedisSharededPoolUtil.setEx(Const.VERIFY_CODE_PREFIX + session.getId(), verifyCodeText,
+                Const.RedisCacheExTime.REDIS_VERIFY_CODE_EXTIME);
+        return ServerResponse.createBySuccess(verifyMap.get("verifyCodePicBase64Str"));
+    }
+
+    /**
+     * 校验验证码
+     *
+     * @param verifyCode 用户输入的验证码
+     * @param request    请求
+     * @return
+     */
+    @RequestMapping(value = "check_verify_code", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<String> checkVerifyCode(String verifyCode, HttpServletRequest request) {
+        String verifyCodeToken = CookieUtil.getCookieValue(Const.CookieNames.VERIFY_CODE, request);
+        if (StringUtils.isEmpty(verifyCodeToken)) {
+            return ServerResponse.createByErrorMessage("未找到对应的Cookie");
+        }
+        String verifyCodeText = JsonUtil.string2Obj(RedisSharededPoolUtil.get(verifyCodeToken),
+                String.class);
+        if (StringUtils.isEmpty(verifyCodeText)) {
+            return ServerResponse.createByErrorMessage("验证码已过期，请刷新重新获取验证码");
+        }
+        return iUserService.checkVerifyCode(verifyCodeText, verifyCode);
     }
 }
