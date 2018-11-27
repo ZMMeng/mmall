@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- 查找使用构造型（stereotype）注解所标注的类
+     base-package：扫描的基本包路径
+     annotation-config：是否激活属性注入注解
+     use-default-filters：是否使用默认扫描，因为只扫描Controller，所以可以关闭默认扫描
+    -->
+    <context:component-scan base-package="com.mmall.controller" annotation-config="true"
+                            use-default-filters="false">
+        <!-- Spring MVC只扫描Controller -->
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!-- 告知Spring，启用注解驱动 -->
+    <mvc:annotation-driven>
+        <!-- 注册特定配置的消息转换器 -->
+        <mvc:message-converters>
+            <!-- 消息转换器HttpMessageConverter 的实现类：完成请求报文到字符串和字符串到响应报文的转换 -->
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <!-- 配置支持的Content-Type -->
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/plain;charset=UTF-8</value>
+                        <value>text/html;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+            <!-- Spring MVC前端JSON转换器 -->
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <!-- 设置内容类型，这里因为使用前后端分离，因此只设置JSON格式 -->
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!-- 引用dubbo服务 -->
+    <dubbo:application name="mmall-sso-web" />
+    <!-- dubbo注册中心 -->
+    <dubbo:registry protocol="zookeeper" address="192.168.116.135:2181"/>
+    <!-- 引用服务 -->
+    <dubbo:reference interface="com.mmall.service.ISsoService" id="iSsoService" />
+</beans>

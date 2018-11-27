@@ -13,8 +13,6 @@
     <artifactId>mmall-manager</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>mmall-manager-pojo</module>
-        <module>mmall-manager-dao</module>
         <module>mmall-manager-interface</module>
         <module>mmall-manager-service</module>
     </modules>

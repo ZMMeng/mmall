@@ -46,3 +46,6 @@ src/main/test/*
 src/test/*
 **/test/
 
+# log file
+**/logs/
+
