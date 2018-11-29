@@ -3,9 +3,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
        xsi:schemaLocation="http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
     <!-- 查找使用构造型（stereotype）注解所标注的类
      base-package：扫描的基本包路径
@@ -44,4 +48,12 @@
             </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
+
+    <!-- 引用dubbo服务 -->
+    <dubbo:application name="mmall-sso-web" />
+    <!-- dubbo注册中心 -->
+    <dubbo:registry protocol="zookeeper" address="192.168.116.135:2181"/>
+    <!-- 引用服务 -->
+    <dubbo:reference interface="com.mmall.service.ISsoService" id="iSsoService" />
+    <dubbo:reference interface="com.mmall.service.ICategoryService" id="iCategoryService" />
 </beans>

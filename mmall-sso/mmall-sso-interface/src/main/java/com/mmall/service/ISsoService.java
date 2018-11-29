@@ -64,4 +64,12 @@ public interface ISsoService {
      * @return
      */
     ServerResponse<String> resetForgetPassword(String username, String passwordNew, String token);
+
+    /**
+     * 查看用户是否具有管理员权限
+     *
+     * @param user 用户
+     * @return
+     */
+    ServerResponse<String> checkAdminRole(User user);
 }

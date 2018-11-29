@@ -197,4 +197,18 @@ public class SsoServiceImpl implements ISsoService {
         RedisSharededPoolUtil.del(Const.TOKEN_PREFIX + username);
         return ServerResponse.createBySuccessMessage("修改密码成功");
     }
+
+    /**
+     * 查看用户是否具有管理员权限
+     *
+     * @param user 用户
+     * @return
+     */
+    @Override
+    public ServerResponse<String> checkAdminRole(User user) {
+        if (user != null && user.getRole() == Const.Role.ROLE_ADMIN) {
+            return ServerResponse.createBySuccess();
+        }
+        return ServerResponse.createByErrorMessage("当前用户无权限操作，需要管理员权限");
+    }
 }
